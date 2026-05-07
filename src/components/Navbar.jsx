@@ -5,6 +5,7 @@ import { signOut } from 'firebase/auth'
 
 function Navbar() {
   const [usuarioLogado, setUsuarioLogado] = useState(null)
+  const [menuAberto, setMenuAberto] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -16,77 +17,48 @@ function Navbar() {
 
   const handleSair = async () => {
     await signOut(auth)
+    setMenuAberto(false)
     navigate('/')
   }
 
   return (
-    <nav style={styles.nav}>
-      <Link to="/" style={styles.logo}>TechAprender</Link>
-      <div style={styles.links}>
-        <Link to="/" style={styles.link}>Início</Link>
+    <nav className="navbar">
+      <Link to="/" className="navbar-logo">TechAprender</Link>
+
+      <button
+        className="navbar-hamburguer"
+        onClick={() => setMenuAberto(!menuAberto)}
+      >
+        {menuAberto ? '✕' : '☰'}
+      </button>
+
+      <div className={`navbar-links ${menuAberto ? 'aberto' : ''}`}>
+        <Link to="/" className="navbar-link" onClick={() => setMenuAberto(false)}>
+          Início
+        </Link>
 
         {usuarioLogado ? (
           <>
-            <Link to="/dashboard" style={styles.link}>Meu Painel</Link>
-            <button style={styles.botaoSair} onClick={handleSair}>Sair</button>
+            <Link to="/dashboard" className="navbar-link" onClick={() => setMenuAberto(false)}>
+              Meu Painel
+            </Link>
+            <button className="navbar-botao-sair" onClick={handleSair}>
+              Sair
+            </button>
           </>
         ) : (
           <>
-            <Link to="/login" style={styles.link}>Entrar</Link>
-            <Link to="/cadastro" style={styles.botaoCadastrar}>Cadastrar</Link>
+            <Link to="/login" className="navbar-link" onClick={() => setMenuAberto(false)}>
+              Entrar
+            </Link>
+            <Link to="/cadastro" className="navbar-botao-cadastrar" onClick={() => setMenuAberto(false)}>
+              Cadastrar
+            </Link>
           </>
         )}
       </div>
     </nav>
   )
-}
-
-const styles = {
-  nav: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '16px 32px',
-    backgroundColor: '#1a4d2e',
-    color: 'white',
-  },
-  logo: {
-    fontSize: '22px',
-    fontWeight: 'bold',
-    color: '#ffffff',
-    letterSpacing: '1px',
-    textDecoration: 'none',
-  },
-  links: {
-    display: 'flex',
-    gap: '24px',
-    alignItems: 'center',
-  },
-  link: {
-    color: '#ffffff',
-    textDecoration: 'none',
-    fontSize: '16px',
-    fontWeight: '500',
-  },
-  botaoCadastrar: {
-    backgroundColor: '#ffffff',
-    color: '#1a4d2e',
-    padding: '8px 20px',
-    borderRadius: '8px',
-    textDecoration: 'none',
-    fontSize: '15px',
-    fontWeight: 'bold',
-  },
-  botaoSair: {
-    backgroundColor: 'transparent',
-    border: '2px solid #ffffff',
-    color: '#ffffff',
-    padding: '8px 20px',
-    borderRadius: '8px',
-    fontSize: '15px',
-    fontWeight: 'bold',
-    cursor: 'pointer',
-  }
 }
 
 export default Navbar
