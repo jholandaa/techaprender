@@ -94,14 +94,23 @@ function Dashboard() {
           <p style={styles.cardTexto}>Explore todas as áreas disponíveis na plataforma.</p>
           <div style={styles.trilhasLista}>
             <button style={styles.botaoTrilha} onClick={() => navigate('/trilha?area=frontend')}>
-              🎨 Frontend
-            </button>
-            <button style={styles.botaoTrilha} onClick={() => navigate('/trilha?area=backend')}>
-              ⚙️ Backend
-            </button>
-            <button style={styles.botaoTrilha} onClick={() => navigate('/trilha?area=dados')}>
-              📊 Dados
-            </button>
+  🎨 Frontend
+</button>
+<button style={styles.botaoTrilha} onClick={() => navigate('/trilha?area=backend')}>
+  ⚙️ Backend
+</button>
+<button style={styles.botaoTrilha} onClick={() => navigate('/trilha?area=banco')}>
+  🗄️ Banco de Dados
+</button>
+<button style={styles.botaoTrilha} onClick={() => navigate('/trilha?area=ia')}>
+  🤖 Inteligência Artificial
+</button>
+<button style={styles.botaoTrilha} onClick={() => navigate('/trilha?area=seguranca')}>
+  🔒 Segurança da Informação
+</button>
+<button style={styles.botaoTrilha} onClick={() => navigate('/trilha?area=mobile')}>
+  📱 Mobile
+</button>
           </div>
         </div>
 
