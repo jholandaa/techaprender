@@ -126,9 +126,20 @@ const perguntas = [
   }
 ]
 
+const nomeArea = {
+  frontend: 'Frontend',
+  backend: 'Backend',
+  banco: 'Banco de Dados',
+  ia: 'Inteligência Artificial',
+  seguranca: 'Segurança da Informação',
+  mobile: 'Mobile'
+}
+
 function Questionario() {
+  const [etapa, setEtapa] = useState('perguntas') // 'perguntas' | 'conhecimento' | 'miniteste'
   const [respostas, setRespostas] = useState({})
   const [perguntaAtual, setPerguntaAtual] = useState(0)
+  const [trilhaDefinida, setTrilhaDefinida] = useState(null)
   const navigate = useNavigate()
 
   const handleResposta = async (pontos) => {
@@ -142,50 +153,147 @@ function Questionario() {
       setPerguntaAtual(perguntaAtual + 1)
     } else {
       const trilha = Object.entries(novasRespostas).sort((a, b) => b[1] - a[1])[0][0]
-
-      const user = auth.currentUser
-      if (user) {
-        try {
-          await setDoc(doc(db, 'usuarios', user.uid), {
-            trilha: trilha
-          }, { merge: true })
-        } catch (e) {
-          console.log('Erro ao salvar trilha:', e)
-        }
-      }
-
-      navigate(`/trilha?area=${trilha}`)
+      setTrilhaDefinida(trilha)
+      setEtapa('conhecimento')
     }
+  }
+
+  const handleConhecimento = async (temConhecimento) => {
+    if (!temConhecimento) {
+      await salvarENavegar(trilhaDefinida, 'basico')
+    } else {
+      setEtapa('miniteste')
+    }
+  }
+
+  const handleMiniteste = async (nivel) => {
+    await salvarENavegar(trilhaDefinida, nivel)
+  }
+
+  const salvarENavegar = async (trilha, nivel) => {
+    const user = auth.currentUser
+    if (user) {
+      try {
+        await setDoc(doc(db, 'usuarios', user.uid), {
+          trilha,
+          nivelInicial: nivel,
+          nivelAtual: nivel,
+        }, { merge: true })
+      } catch (e) {
+        console.log('Erro ao salvar:', e)
+      }
+    }
+    navigate(`/trilha?area=${trilha}&nivel=${nivel}`)
   }
 
   const progresso = (perguntaAtual / perguntas.length) * 100
   const pergunta = perguntas[perguntaAtual]
 
+  // TELA DE CONHECIMENTO PRÉVIO
+  if (etapa === 'conhecimento') {
+    return (
+      <div style={styles.container}>
+        <div style={styles.card}>
+          <div style={styles.iconeGrande}>🎯</div>
+          <h2 style={styles.pergunta}>
+            Sua área é <span style={styles.destaque}>{nomeArea[trilhaDefinida]}</span>!
+          </h2>
+          <p style={styles.subtexto}>
+            Você já tem algum conhecimento em {nomeArea[trilhaDefinida]}?
+          </p>
+          <div style={styles.opcoes}>
+            <button
+              style={styles.opcaoConhecimento}
+              onClick={() => handleConhecimento(false)}
+              onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#1a4d2e'; e.currentTarget.style.color = '#fff' }}
+              onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#fff'; e.currentTarget.style.color = '#1a4d2e' }}
+            >
+              🆕 Não, estou começando do zero
+            </button>
+            <button
+              style={styles.opcaoConhecimento}
+              onClick={() => handleConhecimento(true)}
+              onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#1a4d2e'; e.currentTarget.style.color = '#fff' }}
+              onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#fff'; e.currentTarget.style.color = '#1a4d2e' }}
+            >
+              ✅ Sim, já sei algumas coisas
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // TELA DE MINI-TESTE DE NÍVEL
+  if (etapa === 'miniteste') {
+    return (
+      <div style={styles.container}>
+        <div style={styles.card}>
+          <div style={styles.iconeGrande}>📊</div>
+          <h2 style={styles.pergunta}>Vamos identificar seu nível!</h2>
+          <p style={styles.subtexto}>
+            Como você descreveria seu conhecimento atual em {nomeArea[trilhaDefinida]}?
+          </p>
+          <div style={styles.opcoes}>
+            <button
+              style={{...styles.opcaoNivel, borderColor: '#2d7a3a'}}
+              onClick={() => handleMiniteste('basico')}
+              onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#2d7a3a'; e.currentTarget.style.color = '#fff' }}
+              onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#fff'; e.currentTarget.style.color = '#1a4d2e' }}
+            >
+              <span style={styles.nivelIcone}>🌱</span>
+              <div>
+                <strong>Básico</strong>
+                <p style={styles.nivelDesc}>Conheço os conceitos fundamentais mas ainda não desenvolvi projetos reais</p>
+              </div>
+            </button>
+            <button
+              style={{...styles.opcaoNivel, borderColor: '#1a4d2e'}}
+              onClick={() => handleMiniteste('intermediario')}
+              onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#1a4d2e'; e.currentTarget.style.color = '#fff' }}
+              onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#fff'; e.currentTarget.style.color = '#1a4d2e' }}
+            >
+              <span style={styles.nivelIcone}>🌿</span>
+              <div>
+                <strong>Intermediário</strong>
+                <p style={styles.nivelDesc}>Já desenvolvi alguns projetos e conheço bem as ferramentas principais</p>
+              </div>
+            </button>
+            <button
+              style={{...styles.opcaoNivel, borderColor: '#0d2e1a'}}
+              onClick={() => handleMiniteste('avancado')}
+              onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#0d2e1a'; e.currentTarget.style.color = '#fff' }}
+              onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#fff'; e.currentTarget.style.color = '#1a4d2e' }}
+            >
+              <span style={styles.nivelIcone}>🌳</span>
+              <div>
+                <strong>Avançado</strong>
+                <p style={styles.nivelDesc}>Tenho experiência sólida e já trabalhei em projetos complexos nessa área</p>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // TELA DAS PERGUNTAS PRINCIPAIS
   return (
     <div style={styles.container}>
       <div style={styles.card}>
         <p style={styles.contador}>Pergunta {perguntaAtual + 1} de {perguntas.length}</p>
-
         <div style={styles.progressoFundo}>
           <div style={{ ...styles.progressoBarra, width: `${progresso}%` }} />
         </div>
-
         <h2 style={styles.pergunta}>{pergunta.texto}</h2>
-
         <div style={styles.opcoes}>
           {pergunta.opcoes.map((opcao, index) => (
             <button
               key={index}
               style={styles.opcao}
               onClick={() => handleResposta(opcao.pontos)}
-              onMouseEnter={e => {
-                e.currentTarget.style.backgroundColor = '#1a4d2e'
-                e.currentTarget.style.color = '#ffffff'
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.backgroundColor = '#ffffff'
-                e.currentTarget.style.color = '#1a4d2e'
-              }}
+              onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#1a4d2e'; e.currentTarget.style.color = '#ffffff' }}
+              onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#ffffff'; e.currentTarget.style.color = '#1a4d2e' }}
             >
               {opcao.texto}
             </button>
@@ -213,6 +321,21 @@ const styles = {
     maxWidth: '620px',
     boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
     borderTop: '4px solid #1a4d2e',
+  },
+  iconeGrande: {
+    fontSize: '48px',
+    textAlign: 'center',
+    marginBottom: '16px',
+  },
+  destaque: {
+    color: '#2d7a3a',
+  },
+  subtexto: {
+    fontSize: '16px',
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: '28px',
+    lineHeight: '1.6',
   },
   contador: {
     fontSize: '14px',
@@ -257,6 +380,44 @@ const styles = {
     textAlign: 'left',
     fontWeight: '500',
     transition: 'all 0.2s ease',
+    lineHeight: '1.4',
+  },
+  opcaoConhecimento: {
+    padding: '16px',
+    backgroundColor: '#ffffff',
+    border: '2px solid #1a4d2e',
+    borderRadius: '8px',
+    fontSize: '15px',
+    color: '#1a4d2e',
+    cursor: 'pointer',
+    textAlign: 'center',
+    fontWeight: '600',
+    transition: 'all 0.2s ease',
+  },
+  opcaoNivel: {
+    padding: '16px',
+    backgroundColor: '#ffffff',
+    border: '2px solid',
+    borderRadius: '8px',
+    fontSize: '14px',
+    color: '#1a4d2e',
+    cursor: 'pointer',
+    textAlign: 'left',
+    fontWeight: '500',
+    transition: 'all 0.2s ease',
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: '16px',
+  },
+  nivelIcone: {
+    fontSize: '28px',
+    flexShrink: 0,
+  },
+  nivelDesc: {
+    fontSize: '13px',
+    color: '#666',
+    margin: '4px 0 0 0',
+    fontWeight: 'normal',
     lineHeight: '1.4',
   }
 }
