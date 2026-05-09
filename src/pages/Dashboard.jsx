@@ -7,7 +7,10 @@ import { doc, getDoc } from 'firebase/firestore'
 const nomeTrilha = {
   frontend: '🎨 Frontend',
   backend: '⚙️ Backend',
-  dados: '📊 Dados'
+  banco: '🗄️ Banco de Dados',
+  ia: '🤖 Inteligência Artificial',
+  seguranca: '🔒 Segurança da Informação',
+  mobile: '📱 Mobile'
 }
 
 function Dashboard() {
