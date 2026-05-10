@@ -7,6 +7,7 @@ import Cadastro from '../pages/Cadastro'
 import Questionario from '../pages/Questionario'
 import Dashboard from '../pages/Dashboard'
 import Trilha from '../pages/Trilha'
+import Sobre from '../pages/Sobre'
 
 function RotaProtegida({ children }) {
   const [verificando, setVerificando] = useState(true)
@@ -39,6 +40,7 @@ function AppRoutes() {
       <Route path="/trilha" element={
         <RotaProtegida><Trilha /></RotaProtegida>
       } />
+      <Route path="/sobre" element={<Sobre />} />
     </Routes>
   )
 }

@@ -277,6 +277,8 @@ function Trilha() {
   const topicosAba = trilha.niveis[abaAtiva]?.topicos || []
   const idxNivelAtual = ordemNiveis.indexOf(nivelAtual)
   const temProximo = idxNivelAtual < ordemNiveis.length - 1
+  const concluidos = topicosAba.filter(t => checks[`${area}_${abaAtiva}_${t.id}`]).length
+  const porcentagem = topicosAba.length > 0 ? Math.round((concluidos / topicosAba.length) * 100) : 0
 
   return (
     <div style={styles.container}>
@@ -312,6 +314,21 @@ function Trilha() {
         })}
       </div>
 
+      {/* BARRA DE PROGRESSO */}
+      <div style={styles.progressoContainer}>
+        <div style={styles.progressoInfo}>
+          <span style={styles.progressoTexto}>
+            Progresso em {labelNivel[abaAtiva]}
+          </span>
+          <span style={styles.progressoNumero}>
+            {concluidos} de {topicosAba.length} tópicos concluídos — {porcentagem}%
+          </span>
+        </div>
+        <div style={styles.progressoFundo}>
+          <div style={{ ...styles.progressoBarra, width: `${porcentagem}%` }} />
+        </div>
+      </div>
+
       {/* TÓPICOS */}
       <div style={styles.topicos}>
         {topicosAba.map((topico, index) => {
@@ -340,14 +357,12 @@ function Trilha() {
                     <a key={i} href={v.url} target="_blank" rel="noopener noreferrer" style={styles.link}>▶️ {v.titulo}</a>
                   ))}
                 </div>
-
                 <div style={styles.secao}>
                   <h4 style={styles.secaoTitulo}>🛠️ Projetos sugeridos</h4>
                   {topico.projetos.map((p, i) => (
                     <p key={i} style={styles.itemTexto}>💡 {p}</p>
                   ))}
                 </div>
-
                 <div style={styles.secao}>
                   <h4 style={styles.secaoTitulo}>📚 Referências</h4>
                   {topico.referencias.map((r, i) => (
@@ -387,10 +402,16 @@ const styles = {
   titulo: { fontSize: 'clamp(24px, 4vw, 32px)', fontWeight: 'bold', color: '#1a4d2e', marginBottom: '16px' },
   descricao: { fontSize: '17px', color: '#555', lineHeight: '1.7', marginBottom: '24px' },
   botaoRefazer: { padding: '10px 24px', backgroundColor: 'transparent', border: '2px solid #1a4d2e', borderRadius: '8px', color: '#1a4d2e', fontSize: '15px', fontWeight: 'bold', cursor: 'pointer' },
-  abas: { display: 'flex', gap: '12px', marginBottom: '32px', flexWrap: 'wrap' },
+  abas: { display: 'flex', gap: '12px', marginBottom: '24px', flexWrap: 'wrap' },
   aba: { flex: 1, padding: '12px 16px', backgroundColor: '#ffffff', border: '2px solid #2d7a3a', borderRadius: '8px', fontSize: '15px', color: '#1a4d2e', fontWeight: 'bold', cursor: 'pointer', transition: 'all 0.2s', minWidth: '140px' },
   abaAtiva: { backgroundColor: '#1a4d2e', color: '#ffffff' },
   abaBloqueada: { backgroundColor: '#f0f0f0', border: '2px solid #ccc', color: '#999', cursor: 'not-allowed' },
+  progressoContainer: { backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px 24px', marginBottom: '24px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' },
+  progressoInfo: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', flexWrap: 'wrap', gap: '8px' },
+  progressoTexto: { fontSize: '15px', fontWeight: 'bold', color: '#1a4d2e' },
+  progressoNumero: { fontSize: '14px', color: '#666' },
+  progressoFundo: { width: '100%', height: '10px', backgroundColor: '#e0e0e0', borderRadius: '8px' },
+  progressoBarra: { height: '10px', backgroundColor: '#2d7a3a', borderRadius: '8px', transition: 'width 0.4s ease' },
   topicos: { display: 'flex', flexDirection: 'column', gap: '24px' },
   topicoCard: { backgroundColor: '#ffffff', borderRadius: '12px', padding: '24px', boxShadow: '0 4px 16px rgba(0,0,0,0.07)', borderLeft: '6px solid #2d7a3a', transition: 'all 0.3s' },
   topicoCardConcluido: { borderLeft: '6px solid #27ae60', backgroundColor: '#f0fdf4' },

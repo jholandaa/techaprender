@@ -36,7 +36,9 @@ function Navbar() {
         <Link to="/" className="navbar-link" onClick={() => setMenuAberto(false)}>
           Início
         </Link>
-
+  <Link to="/sobre" className="navbar-link" onClick={() => setMenuAberto(false)}>
+  Sobre
+</Link>
         {usuarioLogado ? (
           <>
             <Link to="/dashboard" className="navbar-link" onClick={() => setMenuAberto(false)}>
