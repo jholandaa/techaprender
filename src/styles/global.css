@@ -8,7 +8,38 @@ body {
   font-family: 'Segoe UI', sans-serif;
 }
 
-/* ===== NAVBAR RESPONSIVA ===== */
+/* ===== ANIMAÇÕES GLOBAIS ===== */
+
+/* Entrada suave de páginas */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Entrada lateral */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Pulso suave */
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+/* Brilho na barra de progresso */
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Aplicar fadeIn em todas as páginas */
+main > * {
+  animation: fadeIn 0.4s ease forwards;
+}
+
+/* ===== NAVBAR ===== */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -17,6 +48,7 @@ body {
   background-color: #1a4d2e;
   color: white;
   position: relative;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
 }
 
 .navbar-logo {
@@ -25,6 +57,11 @@ body {
   color: #ffffff;
   text-decoration: none;
   letter-spacing: 1px;
+  transition: opacity 0.2s ease;
+}
+
+.navbar-logo:hover {
+  opacity: 0.85;
 }
 
 .navbar-links {
@@ -38,6 +75,23 @@ body {
   text-decoration: none;
   font-size: 16px;
   font-weight: 500;
+  position: relative;
+  transition: opacity 0.2s ease;
+}
+
+.navbar-link::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #ffffff;
+  transition: width 0.3s ease;
+}
+
+.navbar-link:hover::after {
+  width: 100%;
 }
 
 .navbar-botao-cadastrar {
@@ -48,6 +102,12 @@ body {
   text-decoration: none;
   font-size: 15px;
   font-weight: bold;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.navbar-botao-cadastrar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
 .navbar-botao-sair {
@@ -59,6 +119,12 @@ body {
   font-size: 15px;
   font-weight: bold;
   cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.navbar-botao-sair:hover {
+  background-color: #ffffff;
+  color: #1a4d2e;
 }
 
 .navbar-hamburguer {
@@ -93,12 +159,75 @@ body {
 
   .navbar-links.aberto {
     display: flex;
+    animation: fadeIn 0.3s ease forwards;
   }
 }
 
-/* ===== CARDS RESPONSIVOS ===== */
+/* ===== BOTÕES GLOBAIS ===== */
+button {
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* ===== CARDS GLOBAIS ===== */
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+/* ===== LINKS GLOBAIS ===== */
+a {
+  transition: opacity 0.2s ease;
+}
+
+a:hover {
+  opacity: 0.8;
+}
+
+/* ===== INPUTS GLOBAIS ===== */
+input {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus {
+  border-color: #1a4d2e !important;
+  box-shadow: 0 0 0 3px rgba(26, 77, 46, 0.15);
+  outline: none;
+}
+
+/* ===== BARRA DE PROGRESSO ANIMADA ===== */
+.progress-bar-animated {
+  background: linear-gradient(
+    90deg,
+    #2d7a3a 0%,
+    #3d9e4e 50%,
+    #2d7a3a 100%
+  );
+  background-size: 200% auto;
+  animation: shimmer 2s linear infinite;
+}
+
+/* ===== RESPONSIVIDADE CARDS ===== */
 @media (max-width: 768px) {
   .cards-responsivos {
     flex-direction: column !important;
   }
+}
+
+/* ===== SCROLL SUAVE ===== */
+html {
+  scroll-behavior: smooth;
 }
